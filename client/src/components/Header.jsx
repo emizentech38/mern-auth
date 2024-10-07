@@ -1,8 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 function Header() {
+  const { currentUser, loading, error } = useSelector((state) => state.user);
+  console.log(currentUser);
+
   const handleSubmit = () => {};
 
   return (
@@ -40,11 +44,27 @@ function Header() {
               About
             </li>
           </Link>
-          <Link to="/sign-in">
+          {/* here if the currentUser exist show profile icon else show signin */}
+          {currentUser ? (
+            <Link to="/profile">
+              <img
+                className="rounded-full h-7 w-7 object-cover"
+                src={currentUser.avatar}
+                alt="profile"
+              />
+            </Link>
+          ) : (
+            <Link to="/sign-in">
+              <li className="hidden sm:inline text-slate-700 hover:underline">
+                Sign in
+              </li>
+            </Link>
+          )}
+          {/* <Link to="/sign-in">
             <li className="hidden sm:inline text-slate-700 hover:underline">
               Sign in
             </li>
-          </Link>
+          </Link> */}
         </ul>
       </div>
     </header>
