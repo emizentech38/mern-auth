@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Link , useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-// navigate from useNavigate it is from the react router dom
-const navigate = useNavigate();
+  // navigate from useNavigate it is from the react router dom
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     // handle the change the of the form data
@@ -16,13 +16,12 @@ const navigate = useNavigate();
       [e.target.id]: e.target.value,
     });
   };
-  console.log(formData);
+  // console.log(formData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      
-      setLoading(true)
+      setLoading(true);
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: {
@@ -31,17 +30,17 @@ const navigate = useNavigate();
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if(data.success === false) {
-        setError(data.message)
+      if (data.success === false) {
+        setError(data.message);
         setLoading(false);
         return;
       }
       setLoading(false);
-      setError(null)
-      navigate('/')
+      setError(null);
+      navigate("/");
     } catch (error) {
       setLoading(false);
-      setError(error.message )
+      setError(error.message);
     }
   };
 
@@ -78,7 +77,7 @@ const navigate = useNavigate();
           <span className="text-blue-700">Sign up</span>
         </Link>
       </div>
-      { error && <p className="text-red-500 mt-5">{error}</p>}
+      {error && <p className="text-red-500 mt-5">{error}</p>}
     </div>
   );
 };
