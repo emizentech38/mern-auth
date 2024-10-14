@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+// import { useForm } from "react-hook-form";
 import {
   signInStart,
   signInSuccess,
@@ -75,14 +76,14 @@ const SignIn = () => {
             id="password"
             onChange={handleChange}
           />
-          <span>
+          {/* <span>
             <button
               className="absolute top-3 right-4 bg-red-600"
               onClick={togglePasswordVisibility}
             >
               show
             </button>
-          </span>
+          </span> */}
         </div>
         <button
           type="submit"
