@@ -6,15 +6,18 @@ import {
   signInSuccess,
   signInFailure,
 } from "../redux/user/userSlice";
-// import the OAuth component
-import OAuth from "../components/OAuth";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
   // const [loading, setLoading] = useState(false);
   // const [error, setError] = useState(null);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const { error, loading } = useSelector((state) => state.user);
+  function togglePasswordVisibility() {
+    setIsPasswordVisible((prevState) => !prevState);
+  }
+
+  const { currentUser, error, loading } = useSelector((state) => state.user);
 
   // navigate from useNavigate it is from the react router dom
   const navigate = useNavigate();
@@ -34,7 +37,7 @@ const SignIn = () => {
     try {
       // setLoading(true);
       dispatch(signInStart());
-      const res = await fetch("/api/auth/signin", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,32 +63,48 @@ const SignIn = () => {
         <input
           type="email"
           placeholder="email"
-          className="border p-3 rounded-lg"
+          className="border border-black p-3 rounded-lg"
           id="email"
           onChange={handleChange}
         />
-        <input
-          type="password"
-          placeholder="password"
-          className="border p-3 rounded-lg"
-          id="password"
-          onChange={handleChange}
-        />
-
+        <div className="flex relative">
+          <input
+            type={isPasswordVisible ? "text" : "password"}
+            placeholder="password"
+            className="border p-3 border-black rounded-lg w-full"
+            id="password"
+            onChange={handleChange}
+          />
+          <span>
+            <button
+              className="absolute top-3 right-4 bg-red-600"
+              onClick={togglePasswordVisibility}
+            >
+              show
+            </button>
+          </span>
+        </div>
         <button
+          type="submit"
           disabled={loading}
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
         >
           {loading ? "Loading..." : "Sign In"}
         </button>
-        {/* <OAuth/> */}
-        <OAuth />
       </form>
-      <div className="flex gap-2 mt-5">
-        <p>Don't have an account?</p>
-        <Link to={"/sign-up"}>
-          <span className="text-blue-700">Sign up</span>
-        </Link>
+      <div className="flex justify-between gap-2 mt-5">
+        <div>
+          <p>Don't have an account?</p>
+          <Link to={"/sign-up"}>
+            <span className="text-blue-700">Sign up</span>
+          </Link>
+        </div>
+        <div>
+          <p>Forgot Password?</p>
+          <Link to={"/reset"}>
+            <span className="text-red-700">reset </span>
+          </Link>
+        </div>
       </div>
       {error && <p className="text-red-500 mt-5">{error}</p>}
     </div>

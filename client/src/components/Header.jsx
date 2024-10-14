@@ -1,58 +1,60 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  signOutUserStart,
+  signOutUserSuccess,
+  signOutUserFailure,
+} from "../redux/user/userSlice";
 
 function Header() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
-  console.log(currentUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {};
+  const handleSignedOut = async () => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch("/api/auth/logout");
+      console.log(res);
+      if (res.ok === false) {
+        dispatch(signOutUserFailure(res.statusText));
+        console.log("false");
+      }
+      dispatch(signOutUserSuccess());
+      navigate("/sign-in");
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message));
+    }
+  };
 
   return (
     <header className="bg-slate-200 shadow-md">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
         <Link to="/">
           <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
-            <span className="text-slate-500">Abhi</span>
-            <span className="text-slate-700">Estate</span>
+            <span className="text-slate-500">Admin</span>
+            <span className="text-slate-700">Dashboard</span>
           </h1>
         </Link>
-        <form
-          onSubmit={handleSubmit}
-          className="bg-slate-100 p-3 rounded-lg flex items-center"
-        >
-          <input
-            type="text"
-            placeholder="Search..."
-            className="bg-transparent focus:outline-none w-24 sm:w-64"
-            // value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button>
-            <FaSearch className="text-slate-600" />
-          </button>
-        </form>
         <ul className="flex gap-4">
-          <Link to="/">
-            <li className="hidden sm:inline text-slate-700 hover:underline">
-              Home
-            </li>
-          </Link>
-          <Link to="/about">
-            <li className="hidden sm:inline text-slate-700 hover:underline">
-              About
-            </li>
-          </Link>
-          {/* here if the currentUser exist show profile icon else show signin */}
-          {currentUser ? (
-            <Link to="/profile">
-              <img
-                className="rounded-full h-7 w-7 object-cover"
-                src={currentUser.avatar}
-                alt="profile"
-              />
+          {currentUser && (
+            <Link to="/">
+              <li className="hidden sm:inline text-slate-700 hover:underline">
+                Home
+              </li>
             </Link>
+          )}
+          {currentUser ? (
+            <button
+              onClick={handleSignedOut}
+              disabled={loading}
+              className="bg-slate-700 text-sm text-white p-2 flex rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+            >
+              Sign Out
+            </button>
           ) : (
             <Link to="/sign-in">
               <li className="hidden sm:inline text-slate-700 hover:underline">
@@ -60,6 +62,8 @@ function Header() {
               </li>
             </Link>
           )}
+          {/* here if the currentUser exist show profile icon else show signin */}
+
           {/* <Link to="/sign-in">
             <li className="hidden sm:inline text-slate-700 hover:underline">
               Sign in

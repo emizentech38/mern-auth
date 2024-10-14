@@ -4,6 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import UserRouter from "./route/user.route.js";
 import AuthRouter from "./route/auth.route.js";
+import cookieParser, { signedCookie } from "cookie-parser";
 
 const app = express();
 const port = 8000;
@@ -11,6 +12,7 @@ const port = 8000;
 // req.body()
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser(process.env.JWT_SECRET));
 
 // database connection
 mongoose
@@ -23,8 +25,8 @@ mongoose
   });
 
 // routes
-app.use("/api/user", UserRouter);
 app.use("/api/auth", AuthRouter);
+app.use("/api/user", UserRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
@@ -40,5 +42,4 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
-  next();
 });
