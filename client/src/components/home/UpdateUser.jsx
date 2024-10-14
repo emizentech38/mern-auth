@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-// import { useSelector } from "react-redux";
-
 import "react-toastify/dist/ReactToastify.css";
+import { useInputValidation } from "6pp";
+import { emailValidator, mobileValidator } from "../../utils/validator";
 
 function UpdateUser() {
   // const [isLoading, setLoading] = useState(false);
@@ -18,12 +18,18 @@ function UpdateUser() {
     toast.success("User Update Successfully");
 
   const userId = params.id;
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const [name, setName] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [email, setEmail] = useState("");
+  const name = useInputValidation("");
+  const mobile = useInputValidation("", mobileValidator);
+  const email = useInputValidation("", emailValidator);
+
   const [userBeforeUpdate, setUserBeforeUpdate] = useState([]);
-  const formData = { name, mobile, email, userId };
+
+  const notifyForError = (msg) => {
+    toast.error(msg);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +41,12 @@ function UpdateUser() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: name.value,
+          mobile: mobile.value,
+          email: email.value,
+          userId,
+        }),
       });
       const data = await res.json();
       if (data.success === false) {
@@ -50,18 +61,8 @@ function UpdateUser() {
       navigate("/all-users");
     } catch (error) {
       setLoading(false);
-      setError(error.message);
+      notifyForError(error.message);
     }
-  };
-
-  const handleName = (e) => {
-    setName(e.target.value);
-  };
-  const handleEmail = (e) => {
-    setEmail(e.target.value);
-  };
-  const handleMobile = (e) => {
-    setMobile(e.target.value);
   };
 
   // fetch the user for the default value
@@ -104,7 +105,7 @@ function UpdateUser() {
                 placeholder="name"
                 className="border p-3 rounded-lg"
                 id="name"
-                onChange={handleName}
+                onChange={name.changeHandler}
                 defaultValue={userBeforeUpdate.name}
               />
               <input
@@ -112,7 +113,7 @@ function UpdateUser() {
                 placeholder="mobile"
                 className="border p-3 rounded-lg"
                 id="mobile"
-                onChange={handleMobile}
+                onChange={mobile.changeHandler}
                 defaultValue={userBeforeUpdate.mobile}
               />
             </div>
@@ -122,7 +123,7 @@ function UpdateUser() {
               placeholder="email"
               className="border p-3 rounded-lg"
               id="email"
-              onChange={handleEmail}
+              onChange={email.changeHandler}
               defaultValue={userBeforeUpdate.email}
             />
           </div>
@@ -133,6 +134,10 @@ function UpdateUser() {
           </button>
         </div>
       </form>
+      <div className="mt-4 text-red-600">
+        {email.error && <p>{email.error}</p>}
+        {mobile.error && <p>{mobile.error}</p>}
+      </div>
     </div>
   );
 }

@@ -33,6 +33,7 @@ export default function DeleteUser({ openPopUp, closePopUp, userId }) {
         navigate("/all-users");
         window.location.reload();
         closePopUp();
+
         return;
       }
       notifyForError("Something went wrong");

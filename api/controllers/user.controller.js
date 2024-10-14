@@ -29,8 +29,9 @@ export const showCurrentUser = (req, res) => {
 export const updateUser = async (req, res, next) => {
   try {
     const { email, name, mobile, userId } = req.body;
+    console.log({ email, name, mobile, userId });
 
-    if (!email || !name || !mobile || !userId) {
+    if (!email || !mobile || !userId) {
       next(errorHandler(StatusCodes.BAD_GATEWAY, "Please provide all values"));
     }
     console.log(email, name, mobile, userId);
@@ -40,10 +41,10 @@ export const updateUser = async (req, res, next) => {
     if (!user) {
       next(errorHandler(StatusCodes.NOT_FOUND, "User not found"));
     }
-    console.log(user);
+    // console.log(user);
 
     user.email = email;
-    user.name = name;
+    if (name) user.name = name;
     user.mobile = mobile;
 
     await user.save();

@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import {
+  signOutUserStart,
+  signOutUserSuccess,
+  signOutUserFailure,
+} from "../../redux/user/userSlice";
 
 import "react-toastify/dist/ReactToastify.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import DeleteUser from "./DeleteUser";
 
@@ -11,12 +16,66 @@ function AllUser() {
   const [openPopup, setOpenPopup] = useState(false);
 
   const HandleRemovePopUp = () => setOpenPopup(false);
+  const dispatch = useDispatch();
 
   const { currentUser, loading, error } = useSelector((state) => state.user);
+  console.log(currentUser.user);
+
   const [users, setUsers] = useState();
   const navigate = useNavigate();
   const notifyForYouAreNotAdmin = () =>
     toast.error("You are not an admin user to access this route");
+
+  // fetch the currentUser
+  // fetch the single user
+  const fetchSingleUser = () => {
+    try {
+      fetch(`/api/user/${currentUser.user._id}`, {
+        method: "get",
+        body: JSON.stringify(),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const res = response.json();
+          res.then((data) => {
+            console.log(data);
+            if (!data) {
+              console.log("false");
+            }
+          });
+        })
+        .catch((error) => {
+          if (error) {
+            try {
+              dispatch(signOutUserStart());
+              fetch("/api/auth/logout")
+                .then((res) => {
+                  console.log(res);
+                  if (res.ok === false) {
+                    dispatch(signOutUserFailure(res.statusText));
+                    console.log("false");
+                  }
+                  dispatch(signOutUserSuccess());
+                  navigate("/sign-in");
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            } catch (error) {
+              dispatch(signOutUserFailure(error.message));
+            }
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSingleUser();
+  }, []);
 
   //fetch the todo from the json api
   const userdata = () => {
