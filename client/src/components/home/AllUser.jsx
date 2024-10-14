@@ -5,8 +5,13 @@ import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import DeleteUser from "./DeleteUser";
 
 function AllUser() {
+  const [openPopup, setOpenPopup] = useState(false);
+
+  const HandleRemovePopUp = () => setOpenPopup(false);
+
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [users, setUsers] = useState();
   const navigate = useNavigate();
@@ -118,13 +123,19 @@ function AllUser() {
                       Edit user
                     </Link>
                   </td>
-                  <td class="px-6 py-4">
-                    <Link
-                      to="/delete-user/:id"
-                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                    >
-                      Delete user
-                    </Link>
+                  <td class="px-3 py-3">
+                    <div className="font-medium text-blue-600 dark:text-blue-500 hover:underline ">
+                      <div>
+                        <button onClick={() => setOpenPopup(true)}>
+                          Delete user
+                        </button>
+                      </div>
+                      <DeleteUser
+                        openPopUp={openPopup}
+                        closePopUp={HandleRemovePopUp}
+                        userId={user._id}
+                      />
+                    </div>
                   </td>
                 </tr>
               );

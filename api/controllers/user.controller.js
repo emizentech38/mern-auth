@@ -60,6 +60,25 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
-export const updateUserPassword = (req, res) => {
-  res.send("updateUserPassword");
+export const deleteUser = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+
+    if (!userId) {
+      next(errorHandler(StatusCodes.NOT_FOUND, "Please provide the user id"));
+    }
+
+    const user = await User.findOne({ _id: userId });
+
+    if (!user) {
+      next(errorHandler(StatusCodes.NOT_FOUND, "User not found"));
+    }
+
+    const deletedUser = await User.deleteOne({ _id: userId });
+    res
+      .status(StatusCodes.OK)
+      .json({ msg: "User delete Successfully", deletedUser });
+  } catch (error) {
+    next(error);
+  }
 };

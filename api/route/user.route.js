@@ -1,11 +1,11 @@
 import express from "express";
 const router = express.Router();
 import {
+  deleteUser,
   getAllUser,
   getSingleUser,
   showCurrentUser,
   updateUser,
-  updateUserPassword,
 } from "../controllers/user.controller.js";
 import { authenticateUser } from "../middleware/authenticateUser.js";
 import { authorizePermissions } from "../middleware/authenticateUser.js";
@@ -18,7 +18,8 @@ router.get(
 );
 router.get("/showme", authenticateUser, showCurrentUser);
 router.patch("/updateUser", authenticateUser, updateUser);
-router.patch("/updateUserPassword", authenticateUser, updateUserPassword);
+router.delete("/deleteUser/:id", authenticateUser, deleteUser);
+// router.patch("/updateUserPassword", authenticateUser, updateUserPassword);
 router.get("/:id", authenticateUser, getSingleUser);
 
 export default router;
