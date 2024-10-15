@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { BiShow } from "react-icons/bi";
+import { GrHide } from "react-icons/gr";
 // import { useForm } from "react-hook-form";
 import {
   signInStart,
@@ -10,6 +12,7 @@ import {
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
+  const [password, showPassword] = useState();
   // const [loading, setLoading] = useState(false);
   // const [error, setError] = useState(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -32,6 +35,9 @@ const SignIn = () => {
     });
   };
   // console.log(formData);
+  const handleShowPassword = () => {
+    setIsPasswordVisible((prev) => !prev);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,7 +74,7 @@ const SignIn = () => {
           id="email"
           onChange={handleChange}
         />
-        <div className="flex relative">
+        <div className="flex justify-center items-center content-center text-center relative ">
           <input
             type={isPasswordVisible ? "text" : "password"}
             placeholder="password"
@@ -76,14 +82,14 @@ const SignIn = () => {
             id="password"
             onChange={handleChange}
           />
-          {/* <span>
-            <button
-              className="absolute top-3 right-4 bg-red-600"
-              onClick={togglePasswordVisibility}
+          <span onClick={handleShowPassword}>
+            <i
+              className=" passshow absolute right-3 bottom-4 cursor-pointer"
+              size={25}
             >
-              show
-            </button>
-          </span> */}
+              {isPasswordVisible ? <BiShow /> : <GrHide />}
+            </i>
+          </span>
         </div>
         <button
           type="submit"
@@ -101,9 +107,9 @@ const SignIn = () => {
           </Link>
         </div>
         <div>
-          <p>Forgot Password?</p>
+          <p>Forgot Password</p>
           <Link to={"/reset"}>
-            <span className="text-red-700">reset </span>
+            <span className="text-red-700">reset password?</span>
           </Link>
         </div>
       </div>

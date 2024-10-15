@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { BiShow } from "react-icons/bi";
+import { GrHide } from "react-icons/gr";
 import OAuth from "../components/OAuth";
 
 const SignUp = () => {
@@ -9,6 +11,10 @@ const SignUp = () => {
 
   // navigate from useNavigate it is from the react router dom
   const navigate = useNavigate();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const handleShowPassword = () => {
+    setIsPasswordVisible((prev) => !prev);
+  };
 
   const handleChange = (e) => {
     // handle the change the of the form data
@@ -48,9 +54,12 @@ const SignUp = () => {
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col  gap-4">
-        <div className="flex">
-          <div className="flex flex-col w-1/2">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col  gap-4 justify-center content-center items-center"
+      >
+        <div className="flex flex-col gap-4 mx-6">
+          <div className="flex flex-row w-1/2">
             <input
               type="text"
               placeholder="name"
@@ -59,23 +68,6 @@ const SignUp = () => {
               onChange={handleChange}
             />
             <input
-              type="email"
-              placeholder="email"
-              className="border p-3 rounded-lg"
-              id="email"
-              onChange={handleChange}
-            />
-            <input
-              type="password"
-              placeholder="password"
-              className="border p-3 rounded-lg"
-              pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-              id="password"
-              onChange={handleChange}
-            />
-          </div>
-          <div className="flex flex-col w-1/2">
-            <input
               type="text"
               placeholder="mobile"
               className="border p-3 rounded-lg"
@@ -83,8 +75,36 @@ const SignUp = () => {
               onChange={handleChange}
             />
           </div>
+          <div className=" flex -row">
+            <input
+              type="email"
+              placeholder="email"
+              className="border p-3 rounded-lg"
+              id="email"
+              onChange={handleChange}
+            />
+            <div className="flex felx-row justify-center items-center content-center text-center relative">
+              <input
+                type={isPasswordVisible ? "text" : "password"}
+                placeholder="password"
+                className="border p-3 border-black rounded-lg w-full"
+                id="password"
+                onChange={handleChange}
+              />
+              <span onClick={handleShowPassword}>
+                <i
+                  className=" passshow absolute right-3 bottom-4 cursor-pointer"
+                  size={25}
+                >
+                  {isPasswordVisible ? <BiShow /> : <GrHide />}
+                </i>
+              </span>
+            </div>
+          </div>
+          {/* 
+          <div className="flex flex-col w-1/2"></div> */}
         </div>
-        <div className="flex">
+        <div className="flex w-full">
           <button
             disabled={loading}
             className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80 w-full mx-auto"

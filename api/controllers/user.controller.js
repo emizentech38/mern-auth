@@ -4,10 +4,11 @@ import { createTokenUser } from "../utils/createTokenUser.js";
 import { attachCookiesToResponse } from "../utils/jwt.js";
 import { checkPermissions } from "../utils/checkPermissions.js";
 import { errorHandler } from "../utils/error.js";
+import bcrypt from "bcryptjs";
 
 export const getAllUser = async (req, res) => {
   console.log(req.user);
-  const users = await User.find({ role: "user" }).select("-password");
+  const users = await User.find({}).select("-password");
   res.status(StatusCodes.OK).json({ users });
 };
 
@@ -20,6 +21,34 @@ export const getSingleUser = async (req, res, next) => {
 
   // checkPermissions(req.user, user._id);
   res.status(StatusCodes.OK).json({ user });
+};
+
+export const createUser = async (req, res, next) => {
+  try {
+    const { name, email, password, mobile, status, role } = req.body;
+    if (!name | !email | !password | !status | !role) {
+      throw new Error("please enter all the fields");
+    }
+
+    // make the password in the hashed form
+    const hashPassword = bcrypt.hashSync(password, 10);
+
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashPassword,
+      role: role,
+      mobile,
+      status: status,
+    });
+
+    console.log(newUser);
+    await newUser.save();
+
+    res.status(StatusCodes.CREATED).json({ msg: "User created" });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const showCurrentUser = (req, res) => {
